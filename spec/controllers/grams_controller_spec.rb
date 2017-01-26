@@ -100,7 +100,7 @@ RSpec.describe GramsController, type: :controller do
   describe "grams#edit action" do
     it "shouldn't let a user who did not create the gram edit a gram" do
       gram = FactoryGirl.create(:gram)
-      user = FactoryGirl.create(:gram)
+      user = FactoryGirl.create(:user)
       sign_in user
 
       get :edit, id: gram.id
@@ -185,7 +185,10 @@ RSpec.describe GramsController, type: :controller do
       sign_in user
 
 
-      post :create, gram: {message: 'Hello!'}
+      post :create, gram: {
+        message: 'Hello!',
+        picture: fixture_file_upload("/picture.jpg", "image/jpg")
+      }
       expect(response).to redirect_to root_path
 
       gram = Gram.last
