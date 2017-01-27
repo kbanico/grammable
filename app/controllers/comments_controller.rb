@@ -1,12 +1,33 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!, only: [:create]
   def create
+    errors = ""
+
     @gram = Gram.find_by_id(params[:gram_id])
 
     return render_not_found if @gram.blank?
 
     @gram.comments.create(comment_params.merge(user: current_user))
-    redirect_to root_path
+    if @gram.save
+      flash[:notice] = "Comment created"
+      redirect_to root_path
+    else
+      @gram.comments.each do |comment|
+         if comment.errors.any?
+          comment.errors.full_messages.each do |error|
+            errors += "#{error}<br>"
+          end
+          flash[:alert] = errors
+          redirect_to root_path
+         end
+      end
+
+
+
+
+
+
+    end
   end
 
   # def edit

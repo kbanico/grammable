@@ -10,10 +10,20 @@ class GramsController < ApplicationController
   end
 
   def create
+    errors = ""
     @gram = current_user.grams.create(gram_params)
     if @gram.save
+      flash[:notice] = "Your post was created"
       redirect_to root_path
     else
+      if @gram.errors.any?
+        @gram.errors.full_messages.each do |error|
+          errors += "#{error}<br>"
+        end
+         flash[:alert] = errors
+
+      end
+
       render "new", status: :unprocessable_entity
     end
   end
